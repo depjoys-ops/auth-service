@@ -1,7 +1,9 @@
 package config
 
 import (
+	"fmt"
 	"log"
+	"net/url"
 	"os"
 	"time"
 
@@ -11,7 +13,7 @@ import (
 type Config struct {
 	Env        string `yaml:"env" env-default:"local"`
 	HTTPServer `yaml:"httpServer"`
-	DBServer   `yaml:"dbServer"`
+	DBPostgres `yaml:"dbPostgres"`
 }
 
 type HTTPServer struct {
@@ -21,8 +23,24 @@ type HTTPServer struct {
 	IdleTimeout  time.Duration `yaml:"idleTimeout" env-default:"60s"`
 }
 
-type DBServer struct {
-	Dns string `yaml:"dns" env-required:"true"`
+type DBPostgres struct {
+	Host        string `yaml:"host" env-required:"true"`
+	Port        int    `yaml:"port" env-required:"true"`
+	User        string `yaml:"user" env-required:"true"`
+	Password    string `yaml:"password" env-required:"true"`
+	Db          string `yaml:"db" env-required:"true"`
+	PoolMaxConn int    `yaml:"poolMaxConn" env-default:"4"`
+}
+
+func (d DBPostgres) Url() string {
+	return fmt.Sprintf("postgres://%s:%s@%s:%d/%s?pool_max_conns=%d",
+		url.QueryEscape(d.User),
+		url.QueryEscape(d.Password),
+		d.Host,
+		d.Port,
+		d.Db,
+		d.PoolMaxConn,
+	)
 }
 
 func Load() *Config {

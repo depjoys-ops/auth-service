@@ -6,5 +6,10 @@ httpServer:
   writeTimeout: 5s
   idleTimeout: 60s
 
-dbServer:
-  dns: "dns"
+dbPostgres:
+  host: "0.0.0.0"
+  port: 5433
+  user: "auth"
+  password: "auth"
+  db: "users"
+  poolMaxConn: 10
