@@ -19,7 +19,7 @@ func NewSlogLogger(filePath, level string) (*logger, error) {
 	}
 
 	handler := slog.NewJSONHandler(out, &slog.HandlerOptions{
-		AddSource: true,
+		AddSource: false,
 		Level:     slogLevel(level),
 	})
 
