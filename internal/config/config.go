@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"log"
 	"net/url"
 	"os"
 	"time"
@@ -14,6 +13,7 @@ type Config struct {
 	Env        string `yaml:"env" env-default:"local"`
 	HTTPServer `yaml:"httpServer"`
 	DBPostgres `yaml:"dbPostgres"`
+	Logger     `yaml:"dbPostgres"`
 }
 
 type HTTPServer struct {
@@ -43,20 +43,25 @@ func (d DBPostgres) Url() string {
 	)
 }
 
-func Load() *Config {
+type Logger struct {
+	FilePath string `yaml:"filePath"`
+	Level    string `yaml:"level" env-default:"Info"`
+}
+
+func Load() (*Config, error) {
 	configPath := os.Getenv("CONFIG_PATH")
 	if configPath == "" {
-		log.Fatal("CONFIG_PATH is not set")
+		return nil, fmt.Errorf("CONFIG_PATH is not set")
 	}
 
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		log.Fatalf("config file does not exist: %s", configPath)
+		return nil, fmt.Errorf("config file does not exist: %s", configPath)
 	}
 
 	var cfg Config
 	if err := cleanenv.ReadConfig(configPath, &cfg); err != nil {
-		log.Fatalf("cannot read config: %s", err)
+		return nil, fmt.Errorf("cannot read config: %s", err)
 	}
 
-	return &cfg
+	return &cfg, nil
 }

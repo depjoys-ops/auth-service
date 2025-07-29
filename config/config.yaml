@@ -13,3 +13,7 @@ dbPostgres:
   password: "auth"
   db: "users"
   poolMaxConn: 10
+
+logger:
+  filePath: ""
+  level: "Debug" # Debug, Info, Warn, Error
