@@ -1,1 +1,1 @@
-export CONFIG_PATH="./config/local.yaml" && go run ./cmd/app </br>
+export CONFIG_PATH="./config/config.yaml" && go run ./cmd/app </br>
