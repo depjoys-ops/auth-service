@@ -13,7 +13,7 @@ type Config struct {
 	Env        string `yaml:"env" env-default:"local"`
 	HTTPServer `yaml:"httpServer"`
 	DBPostgres `yaml:"dbPostgres"`
-	Logger     `yaml:"dbPostgres"`
+	Logger     `yaml:"logger"`
 }
 
 type HTTPServer struct {
