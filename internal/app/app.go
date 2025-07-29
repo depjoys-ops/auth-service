@@ -9,9 +9,8 @@ import (
 	"github.com/depjoys-ops/auth-service/internal/delivery/httpserver"
 	"github.com/depjoys-ops/auth-service/internal/repository"
 	"github.com/depjoys-ops/auth-service/internal/service"
+	"github.com/depjoys-ops/auth-service/pkg/database"
 	"github.com/depjoys-ops/auth-service/pkg/logger"
-
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func Run(cfg *config.Config, log logger.Logger) {
@@ -19,13 +18,13 @@ func Run(cfg *config.Config, log logger.Logger) {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()
 
-	dbPool, err := pgxpool.New(ctx, cfg.DBPostgres.Url())
+	conn, err := database.NewPostgresPool(ctx, cfg.Databases["users"].URL)
 	if err != nil {
-		log.Error("can not create pgxpool")
+		log.Error("can not create DB pool")
 	}
-	defer dbPool.Close()
+	defer conn.Close()
 
-	repository := repository.NewPostgresRepository(dbPool)
+	repository := repository.NewPostgresRepository(conn)
 	userService := service.NewUserService(repository)
 	_ = httpserver.NewAppHandler(userService, log)
 	httpRouter := httpserver.NewRouter()
