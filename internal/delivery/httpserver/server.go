@@ -20,7 +20,7 @@ type ServerOptions struct {
 
 type HTTPServer struct {
 	server *http.Server
-	logger logger.Logger
+	log    logger.Logger
 }
 
 func NewHTTPServer(handler http.Handler, log logger.Logger, opts ServerOptions) *HTTPServer {
@@ -35,26 +35,32 @@ func NewHTTPServer(handler http.Handler, log logger.Logger, opts ServerOptions) 
 
 	return &HTTPServer{
 		server: srv,
-		logger: log,
+		log:    log,
 	}
 }
 
-func (s *HTTPServer) Start() {
-	s.logger.Info(fmt.Sprintf("HTTP server starting on %s", s.server.Addr))
+func (s *HTTPServer) Start() <-chan error {
+	errChan := make(chan error, 1)
+	s.log.Info(fmt.Sprintf("HTTP server starting on %s", s.server.Addr))
 
 	go func() {
 		if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			s.logger.Error("HTTP server failed to start", err.Error())
+			s.log.Error("HTTP server failed to start", err.Error())
+			errChan <- err
 		}
 	}()
+
+	return errChan
 }
 
 func (s *HTTPServer) Shutdown(ctx context.Context) error {
-	s.logger.Info("HTTP server shutting down...")
+	s.log.Info("HTTP server shutting down...")
+
 	if err := s.server.Shutdown(ctx); err != nil {
-		s.logger.Error("HTTP server shutdown failed", err.Error())
+		s.log.Error("HTTP server shutdown failed", err.Error())
 		return err
 	}
-	s.logger.Info("HTTP server stopped")
+
+	s.log.Info("HTTP server stopped")
 	return nil
 }

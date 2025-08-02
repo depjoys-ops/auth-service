@@ -4,6 +4,7 @@ import (
 	"context"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/depjoys-ops/auth-service/internal/config"
 	"github.com/depjoys-ops/auth-service/internal/delivery/httpserver"
@@ -20,7 +21,8 @@ func Run(cfg *config.Config, log logger.Logger) {
 
 	conn, err := database.NewPostgresPool(ctx, cfg.Databases["users"].URL)
 	if err != nil {
-		log.Error("can not create DB pool")
+		log.Error("can not create DB pool", err)
+		return
 	}
 	defer conn.Close()
 
@@ -38,8 +40,21 @@ func Run(cfg *config.Config, log logger.Logger) {
 	}
 
 	httpServer := httpserver.NewHTTPServer(httpRouter, log, httpServerOpts)
-	httpServer.Start()
+	serverErrChan := httpServer.Start()
 
-	<-ctx.Done()
-	httpServer.Shutdown(ctx)
+	select {
+	case <-ctx.Done():
+		shutdownCtx, cancelShutdown := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancelShutdown()
+		err := httpServer.Shutdown(shutdownCtx)
+		if err != nil {
+			return
+		}
+
+	case err := <-serverErrChan:
+		if err != nil {
+			return
+		}
+	}
+
 }
