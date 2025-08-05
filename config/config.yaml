@@ -7,7 +7,7 @@ httpServer:
 databases:
   users:
     url: >
-      postgres://auth:auth@0.0.0.0:5433/users?
+      postgres://auth_role:auth_password@0.0.0.0:5433/auth_db?
       pool_max_conns=10&pool_min_conns=5&pool_max_conn_lifetime=2h&
       pool_max_conn_idle_time=15m&
       pool_health_check_period=1m&
