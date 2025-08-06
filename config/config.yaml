@@ -6,14 +6,8 @@ httpServer:
   idleTimeout: 60s
 databases:
   users:
-    url: >
-      postgres://auth_role:auth_password@0.0.0.0:5433/auth_db?
-      pool_max_conns=10&pool_min_conns=5&pool_max_conn_lifetime=2h&
-      pool_max_conn_idle_time=15m&
-      pool_health_check_period=1m&
-      connect_timeout=5&
-      application_name=auth-service&
-      timezone=Europe/Kiev
+    url: "postgres://auth_role:auth_password@postgres-service:5432/auth_db?sslmode=disable&pool_max_conns=10&pool_min_conns=5&pool_max_conn_lifetime=2h&pool_max_conn_idle_time=15m&pool_health_check_period=1m&connect_timeout=5&application_name=auth-service&timezone=Europe/Kiev"
+    migrate: "postgres://auth_role:auth_password@postgres-service:5432/auth_db?sslmode=disable"
 logger:
   filePath: ""
   level: "Debug" # Debug, Info, Warn, Error

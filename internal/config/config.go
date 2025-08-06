@@ -23,7 +23,8 @@ type HTTPServer struct {
 }
 
 type ConfigDatabase struct {
-	URL string `yaml:"url" env-required:"true"`
+	URL        string `yaml:"url" env-required:"true"`
+	MigrateUrl string `yaml:"migrate"`
 }
 
 type Logger struct {

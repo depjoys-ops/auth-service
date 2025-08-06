@@ -6,6 +6,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/depjoys-ops/auth-service/db"
 	"github.com/depjoys-ops/auth-service/internal/config"
 	"github.com/depjoys-ops/auth-service/internal/delivery/httpserver"
 	"github.com/depjoys-ops/auth-service/internal/repository"
@@ -15,6 +16,20 @@ import (
 )
 
 func Run(cfg *config.Config, log logger.Logger) {
+
+	if err := db.RunMigrations(cfg.Databases["users"].MigrateUrl); err != nil {
+		log.Error("migration failed", err)
+		return
+	} else {
+		log.Info("migrations applied successfully")
+	}
+
+	if v, err := db.CheckMigrations(cfg.Databases["users"].MigrateUrl); err != nil {
+		log.Error("check migration failed", err)
+		return
+	} else {
+		log.Info("database at migration", "version", v)
+	}
 
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()
