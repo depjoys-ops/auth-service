@@ -4,7 +4,7 @@ CREATE TABLE public.users (
     first_name character varying(255),
     last_name character varying(255),
     password bytea NOT NULL,
-    user_active bool NOT NULL,
+    activated bool NOT NULL,
     created_at timestamp(0) with time zone NOT NULL DEFAULT NOW(),
     updated_at timestamp(0) with time zone NOT NULL DEFAULT NOW(),
 	version integer NOT NULL DEFAULT 1
