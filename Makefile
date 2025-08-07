@@ -20,7 +20,7 @@ go_stop:
 	@-pkill -SIGTERM -f "./bin/app/${AUTH_BINARY}"
 	@echo "Stopped ${AUTH_BINARY}!"
 
-build_image:
+build_image: go_build
 	@echo "Building image..."
 	@docker build --no-cache -f build/docker/Dockerfile -t ${AUTH_BINARY} .
 	@echo "Done!"
