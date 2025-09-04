@@ -43,8 +43,7 @@ func Run(cfg *config.Config, log logger.Logger) {
 
 	repository := repository.NewPostgresRepository(conn)
 	userService := service.NewUserService(repository)
-	appHandler := httpserver.NewAppHandler(userService, log)
-	httpRouter := httpserver.NewRouter(appHandler)
+	handlers := httpserver.NewAppHandler(userService, log)
 
 	httpServerOpts := httpserver.ServerOptions{
 		Addr:         cfg.HTTPServer.Addr,
@@ -54,7 +53,7 @@ func Run(cfg *config.Config, log logger.Logger) {
 		ErrorLog:     log.ServerErrorLog(),
 	}
 
-	httpServer := httpserver.NewHTTPServer(httpRouter, log, httpServerOpts)
+	httpServer := httpserver.NewHTTPServer(handlers, log, httpServerOpts)
 	serverErrChan := httpServer.Start()
 
 	select {

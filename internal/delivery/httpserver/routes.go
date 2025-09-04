@@ -8,7 +8,7 @@ import (
 	"github.com/go-chi/cors"
 )
 
-func NewRouter(appHandler *appHandler) http.Handler {
+func newRouter(h *appHandler) http.Handler {
 	mux := chi.NewRouter()
 
 	mux.Use(cors.Handler(cors.Options{
@@ -21,7 +21,7 @@ func NewRouter(appHandler *appHandler) http.Handler {
 	}))
 
 	mux.Use(middleware.Heartbeat("/ping"))
-	mux.Post("/authenticate", appHandler.authenticate)
+	mux.Post("/authenticate", h.authenticate)
 
 	return mux
 }

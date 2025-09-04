@@ -23,10 +23,10 @@ type HTTPServer struct {
 	log    logger.Logger
 }
 
-func NewHTTPServer(handler http.Handler, log logger.Logger, opts ServerOptions) *HTTPServer {
+func NewHTTPServer(h *appHandler, log logger.Logger, opts ServerOptions) *HTTPServer {
 	srv := &http.Server{
 		Addr:         opts.Addr,
-		Handler:      handler,
+		Handler:      newRouter(h),
 		ReadTimeout:  opts.ReadTimeout,
 		WriteTimeout: opts.WriteTimeout,
 		IdleTimeout:  opts.IdleTimeout,

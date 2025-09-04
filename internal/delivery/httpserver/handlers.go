@@ -22,7 +22,7 @@ func NewAppHandler(service service.UserService, logger logger.Logger) *appHandle
 	}
 }
 
-func (a *appHandler) authenticate(w http.ResponseWriter, r *http.Request) {
+func (h *appHandler) authenticate(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -37,7 +37,7 @@ func (a *appHandler) authenticate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	auth, err := a.userService.Authentication(ctx, requestPayload.Email, requestPayload.Password)
+	auth, err := h.userService.Authentication(ctx, requestPayload.Email, requestPayload.Password)
 	if err != nil || !auth {
 		errorJSON(w, fmt.Errorf("invalid credentials: %w", err), http.StatusBadRequest)
 		return
