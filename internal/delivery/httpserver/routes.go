@@ -21,7 +21,7 @@ func newRouter(h *appHandler) http.Handler {
 	}))
 
 	mux.Use(middleware.Heartbeat("/ping"))
-	mux.Post("/authenticate", h.authenticate)
+	mux.Post("/authenticate", h.handleAuthenticate)
 
 	return mux
 }

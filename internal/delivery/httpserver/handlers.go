@@ -22,7 +22,7 @@ func NewAppHandler(service service.UserService, logger logger.Logger) *appHandle
 	}
 }
 
-func (h *appHandler) authenticate(w http.ResponseWriter, r *http.Request) {
+func (h *appHandler) handleAuthenticate(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
