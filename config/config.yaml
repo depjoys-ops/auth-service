@@ -1,6 +1,6 @@
 env: "local" # local, dev, prod
 httpServer:
-  addr: "0.0.0.0:4001"
+  addr: "0.0.0.0:80"
   readTimeout: 5s
   writeTimeout: 5s
   idleTimeout: 60s
