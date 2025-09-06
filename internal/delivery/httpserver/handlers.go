@@ -12,13 +12,13 @@ import (
 
 type appHandler struct {
 	userService service.UserService
-	logger      logger.Logger
+	log         logger.Logger
 }
 
 func NewAppHandler(service service.UserService, logger logger.Logger) *appHandler {
 	return &appHandler{
 		userService: service,
-		logger:      logger,
+		log:         logger,
 	}
 }
 
@@ -37,6 +37,8 @@ func (h *appHandler) handleAuthenticate(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	h.log.Info("request", requestPayload)
+
 	auth, err := h.userService.Authentication(ctx, requestPayload.Email, requestPayload.Password)
 	if err != nil || !auth {
 		errorJSON(w, fmt.Errorf("invalid credentials: %w", err), http.StatusBadRequest)
@@ -49,4 +51,5 @@ func (h *appHandler) handleAuthenticate(w http.ResponseWriter, r *http.Request) 
 	}
 
 	writeJSON(w, http.StatusOK, payload)
+	h.log.Info("response", payload)
 }
